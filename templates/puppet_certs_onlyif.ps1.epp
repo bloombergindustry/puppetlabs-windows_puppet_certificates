@@ -1,5 +1,9 @@
-$cert_path = '<%= @cert_path %>'
-$cert_type = '<%= @cert_type %>'
+<%- |
+  Stdlib::Windowspath $cert_path,
+  Enum['trusted_root_ca', 'personal'] $cert_type,
+| -%>
+$cert_path = '<%= $cert_path %>'
+$cert_type = '<%= $cert_type %>'
 
 $VerbosePreference = 'Continue'
 $ErrorActionPreference = 'Stop'

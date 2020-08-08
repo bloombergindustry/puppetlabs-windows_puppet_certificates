@@ -14,9 +14,21 @@ define windows_puppet_certificates::windows_certificate (
   Enum['present'] $ensure = 'present',
   Optional[Stdlib::Windowspath] $key_path,
 ) {
+
+  $common  = epp("${module_name}/puppet_certs_common.ps1")
+  $command = epp("${module_name}/puppet_certs_command.ps1", {
+    cert_path => $cert_path,
+    key_path  => $key_path,
+    cert_type => $cert_type,
+  })
+  $onlyif  = epp("${module_name}/puppet_certs_onlyif.ps1", {
+    cert_path => $cert_path,
+    cert_type => $cert_type,
+  })
+
   exec { $name:
-    command  => template('windows_puppet_certificates/puppet_certs_common.ps1', 'windows_puppet_certificates/puppet_certs_command.ps1'),
-    onlyif   => template('windows_puppet_certificates/puppet_certs_common.ps1', 'windows_puppet_certificates/puppet_certs_onlyif.ps1'),
+    command  => "${common}${command}",
+    onlyif   => "${common}${onlyif}",
     provider => powershell,
   }
 }
